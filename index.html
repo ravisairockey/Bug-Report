@@ -4,83 +4,199 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GBuds Bug Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --primary: #4361ee;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --success: #4cc9f0;
+      --danger: #f72585;
+    }
+    * {
       margin: 0;
-      padding: 20px;
-      background-color: #f5f5f5;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background 0.3s, color 0.2s;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: #333;
+      line-height: 1.6;
+    }
+    .dark-mode {
+      background: var(--dark);
+      color: var(--light);
     }
     .container {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1.5rem;
       background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .dark-mode .container {
+      background: #16213e;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
     }
     h1 {
-      color: #2c3e50;
-      text-align: center;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+    .toggle-mode {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 1.5rem;
     }
     label {
       display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
     }
     input, select, textarea {
       width: 100%;
-      padding: 8px;
+      padding: 0.8rem;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 8px;
+      font-family: inherit;
+    }
+    .dark-mode input, 
+    .dark-mode select, 
+    .dark-mode textarea {
+      background: #1a1a2e;
+      border-color: #333;
+      color: white;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
     }
     button {
-      background: #3498db;
+      background: var(--primary);
       color: white;
       border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     button:hover {
-      background: #2980b9;
+      opacity: 0.9;
     }
     #bugList {
-      margin-top: 20px;
+      margin-top: 3rem;
     }
     .bug-item {
-      background: #f9f9f9;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--primary);
+      animation: fadeIn 0.5s ease;
+    }
+    .dark-mode .bug-item {
+      background: #16213e;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .bug-item h3 {
-      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    .bug-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .severity {
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .severity-high {
+      background: #f72585;
+      color: white;
+    }
+    .severity-critical {
+      background: #d00000;
+      color: white;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--success);
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem;
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>GBuds Bug Tracker</h1>
+    <header>
+      <h1><i class="fas fa-bug"></i> GBuds Bug Tracker</h1>
+      <button class="toggle-mode" id="toggleMode">
+        <i class="fas fa-moon"></i> Dark Mode
+      </button>
+    </header>
+
     <form id="bugForm">
       <div class="form-group">
-        <label for="category">Category/Feature Affected:</label>
-        <input type="text" id="category" required>
+        <label for="category"><i class="fas fa-tag"></i> Category/Feature</label>
+        <input type="text" id="category" placeholder="e.g., 'Science Experiments'" required>
       </div>
       <div class="form-group">
-        <label for="issue">Issue Description:</label>
-        <textarea id="issue" rows="3" required></textarea>
+        <label for="issue"><i class="fas fa-exclamation-circle"></i> Issue Description</label>
+        <textarea id="issue" placeholder="Describe the bug in detail..." required></textarea>
       </div>
       <div class="form-group">
-        <label for="steps">Steps to Reproduce:</label>
-        <textarea id="steps" rows="3" required></textarea>
+        <label for="steps"><i class="fas fa-list-ol"></i> Steps to Reproduce</label>
+        <textarea id="steps" placeholder="1. Open... 2. Click..." required></textarea>
       </div>
       <div class="form-group">
-        <label for="severity">Severity:</label>
+        <label for="severity"><i class="fas fa-exclamation-triangle"></i> Severity</label>
         <select id="severity" required>
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
@@ -89,22 +205,107 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="device">Device/OS:</label>
-        <input type="text" id="device" required>
+        <label for="device"><i class="fas fa-mobile-alt"></i> Device/OS</label>
+        <input type="text" id="device" placeholder="e.g., 'Android 13, OnePlus 9'" required>
       </div>
-      <button type="submit">Submit Bug</button>
+      <button type="submit"><i class="fas fa-paper-plane"></i> Submit Bug</button>
     </form>
 
     <div id="bugList">
-      <h2>Reported Bugs</h2>
-      <!-- Bugs will appear here -->
+      <h2><i class="fas fa-list"></i> Reported Bugs</h2>
+      <!-- Bugs load here -->
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    document.getElementById('bugForm').addEventListener('submit', function(e) {
+    // Dark Mode Toggle
+    document.getElementById('toggleMode').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const icon = document.querySelector('#toggleMode i');
+      if (document.body.classList.contains('dark-mode')) {
+        icon.className = 'fas fa-sun';
+        document.getElementById('toggleMode').innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+      } else {
+        icon.className = 'fas fa-moon';
+        document.getElementById('toggleMode').innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+      }
+    });
+
+    // GitHub API Integration
+    const REPO_OWNER = 'YOUR_GITHUB_USERNAME';
+    const REPO_NAME = 'YOUR_REPO_NAME';
+    const FILE_PATH = 'bugs.json'; // File to store bugs
+    const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'; // Generate in GitHub Settings > Developer Settings
+
+    async function saveBugToGitHub(bug) {
+      try {
+        // Fetch existing bugs
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+        });
+        let existingBugs = [];
+        let sha = null;
+
+        if (res.ok) {
+          const data = await res.json();
+          sha = data.sha;
+          existingBugs = JSON.parse(atob(data.content));
+        }
+
+        // Add new bug
+        existingBugs.push(bug);
+
+        // Commit to GitHub
+        await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` },
+          body: JSON.stringify({
+            message: `Bug reported: ${bug.category}`,
+            content: btoa(JSON.stringify(existingBugs, null, 2)),
+            sha: sha
+          })
+        });
+
+        showToast('Bug reported successfully!');
+        displayBug(bug);
+      } catch (err) {
+        console.error('Error saving to GitHub:', err);
+        showToast('Failed to save bug.', true);
+      }
+    }
+
+    function displayBug(bug) {
+      const bugList = document.getElementById('bugList');
+      const bugItem = document.createElement('div');
+      bugItem.className = 'bug-item';
+      bugItem.innerHTML = `
+        <h3>${bug.category}</h3>
+        <div class="bug-meta">
+          <span><i class="fas fa-calendar-alt"></i> ${bug.timestamp}</span>
+          <span><i class="fas fa-mobile-alt"></i> ${bug.device}</span>
+          <span class="severity ${bug.severity === 'High' ? 'severity-high' : ''} ${bug.severity === 'Critical' ? 'severity-critical' : ''}">
+            <i class="fas fa-bolt"></i> ${bug.severity}
+          </span>
+        </div>
+        <p><strong>Issue:</strong> ${bug.issue}</p>
+        <p><strong>Steps:</strong> ${bug.steps}</p>
+      `;
+      bugList.appendChild(bugItem);
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      toast.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // Form Submission
+    document.getElementById('bugForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const bug = {
         category: document.getElementById('category').value,
         issue: document.getElementById('issue').value,
@@ -113,38 +314,25 @@
         device: document.getElementById('device').value,
         timestamp: new Date().toLocaleString()
       };
-
-      // Save to LocalStorage
-      let bugs = JSON.parse(localStorage.getItem('gbudsBugs')) || [];
-      bugs.push(bug);
-      localStorage.setItem('gbudsBugs', JSON.stringify(bugs));
-
-      // Display the bug
-      displayBug(bug);
-
-      // Reset form
+      await saveBugToGitHub(bug);
       document.getElementById('bugForm').reset();
     });
 
-    // Load bugs on page load
-    window.addEventListener('load', function() {
-      const bugs = JSON.parse(localStorage.getItem('gbudsBugs')) || [];
-      bugs.forEach(displayBug);
+    // Load bugs on page load (optional)
+    window.addEventListener('load', async () => {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const bugs = JSON.parse(atob(data.content));
+          bugs.forEach(displayBug);
+        }
+      } catch (err) {
+        console.log('No existing bugs file or error loading:', err);
+      }
     });
-
-    function displayBug(bug) {
-      const bugList = document.getElementById('bugList');
-      const bugItem = document.createElement('div');
-      bugItem.className = 'bug-item';
-      bugItem.innerHTML = `
-        <h3>${bug.category} (${bug.severity})</h3>
-        <p><strong>Device:</strong> ${bug.device}</p>
-        <p><strong>Issue:</strong> ${bug.issue}</p>
-        <p><strong>Steps:</strong> ${bug.steps}</p>
-        <p><small>Reported on: ${bug.timestamp}</small></p>
-      `;
-      bugList.appendChild(bugItem);
-    }
   </script>
 </body>
 </html>
